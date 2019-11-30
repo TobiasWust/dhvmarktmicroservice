@@ -5,13 +5,13 @@ const cors = require('cors');
 const app = express();
 
 const dhvAnalyse = {
-  async init() {
+  async init(qty) {
     if (await db.count() === 0) {
       const offers = await dhv.getAll();
       offers.forEach(offer => db.save(offer));
     } else {
       // add new to DB
-      const dhvOffers = await dhv.getAll();
+      const dhvOffers = await dhv.getAll(qty);
       const dbOffers = await db.getAll();
       const offers = dhvOffers.filter(e => !dbOffers.map(m => m.link).includes(e.link));
       if (offers.length > 0) offers.forEach(offer => db.save(offer));
@@ -27,6 +27,7 @@ const dhvAnalyse = {
 app.use(cors());
 
 app.get('/', async (_req, res) => {
+  dhvAnalyse.init(20); // always get the latest
   const offers = (await dhvAnalyse.getOffers()).map(e => {
     r = {};
     r.link = e.link;
@@ -38,8 +39,8 @@ app.get('/', async (_req, res) => {
   res.json(offers);
 });
 
-app.post('/update', async (_req, res) => {
-  dhvAnalyse.init();
+app.get('/update', async (_req, res) => {
+  dhvAnalyse.init(100);
 });
 
 const server = app.listen(process.env.PORT || 8081, () => {

@@ -2,10 +2,9 @@ const http = require('https');
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-const url = 'https://www.dhv.de/db3/gebrauchtmarkt/anzeigen?suchbegriff=&rubrik=0&hersteller=&muster=&preismin=&preismax=&anbietertyp=0&land=0&plz=&start=0&itemsperpage=2000000&order=1'
-
 const dhv = {
-  getAll() {
+  getAll(qty = 2000000) {
+    const url = `https://www.dhv.de/db3/gebrauchtmarkt/anzeigen?suchbegriff=&rubrik=0&hersteller=&muster=&preismin=&preismax=&anbietertyp=0&land=0&plz=&start=0&itemsperpage=${qty}&order=1`;
     console.log('getting offers')
     return new Promise((resolve) => {
       http.get(url, res => {
