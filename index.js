@@ -24,7 +24,7 @@ const dhvAnalyse = {
   }
 }
 
-app.use(cors);
+app.use(cors());
 
 app.get('/', async (_req, res) => {
   const offers = (await dhvAnalyse.getOffers()).map(e => {
