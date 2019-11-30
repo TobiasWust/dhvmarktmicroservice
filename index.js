@@ -1,6 +1,7 @@
 const dhv = require('./dhv');
 const db = require('./db');
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
 const dhvAnalyse = {
@@ -22,6 +23,8 @@ const dhvAnalyse = {
     return dbOffers;
   }
 }
+
+app.use(cors);
 
 app.get('/', async (_req, res) => {
   const offers = (await dhvAnalyse.getOffers()).map(e => {
