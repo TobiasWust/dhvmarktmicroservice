@@ -18,7 +18,6 @@ const dhvAnalyse = {
     }
   },
   async getOffers() {
-    this.init(); // just in case init but don't wait for it
     const dbOffers = await db.getAll();
     return dbOffers;
   }
