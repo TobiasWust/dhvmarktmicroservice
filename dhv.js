@@ -15,7 +15,7 @@ const dhv = {
           const { document } = (new JSDOM(body)).window;
           const offers = [...document.querySelectorAll('.gm_offer')].map(e => {
             const offer = {};
-            offer.link =  e.querySelector('a').href;
+            offer.link = 'https://www.dhv.de' + e.querySelector('a').href;
             const germanDate = e.querySelector('.gm_seller').querySelectorAll('li')[3].textContent ? e.querySelector('.gm_seller').querySelectorAll('li')[3].textContent.match(/[\d.]+/g)[0] : '0';
             offer.date = Date.parse(germanDate.split('.').reverse().join('-'));
             offer.title = e.querySelector('h2').textContent;
