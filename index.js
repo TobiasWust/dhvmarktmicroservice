@@ -13,7 +13,7 @@ const dhvAnalyse = {
     } else {
       // add new to DB
       const dhvOffers = await dhv.getAll(qty);
-      const airscoutOffers = await airscout.getAll();
+      const airscoutOffers = await airscout.getAll(qty);
       const allOffers = [...dhvOffers, ...airscoutOffers];
       const dbOffers = await db.getAll();
       const offers = allOffers.filter(e => !dbOffers.map(m => m.link).includes(e.link));
@@ -50,4 +50,5 @@ const server = app.listen(process.env.PORT || 8081, () => {
   const host = server.address().address
   const port = server.address().port
   console.log('immoapi listening at http://%s:%s', host, port)
+  airscout.getAll(1);
 })

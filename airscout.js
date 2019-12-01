@@ -4,21 +4,22 @@ const { JSDOM } = jsdom;
 
 const airscout = {
   offers: [],
-  getAll() {
+  getAll(qty) {
     const url = `https://www.airscout365.com/index.php/de/anzeigen/alle_anzeigen`;
     console.log('getting airscout ads')
-    this.getPage(url)
+    this.getPage(url, qty)
     return new Promise((resolve) => {
       this.getAllResolve = resolve;
     });
   },
-  getPage(url) {
+  getPage(url, qty) {
     http.get(`${url}`, res => {
       res.setEncoding('utf8');
       let body = '';
       res.on('data', data => { body += data });
       res.on('end', () => {
         const { document } = (new JSDOM(body)).window;
+        console.log(document);
         [...document.querySelectorAll('.adsmanager-list tr[class^=" trcategory"')].map(e => {
           const offer = {};
           offer.link = e.querySelector('a').href;
@@ -28,8 +29,9 @@ const airscout = {
           offer.price = e.querySelector('.fad_price') ? e.querySelector('.fad_price').textContent.match(/\d+/g).join('').slice(0, -2) : 0;
           this.offers.push(offer);
         });
+        if (this.offers.length >= qty) return;
         const next = document.querySelector('[title=Weiter]');
-        if (next) this.getPage(next)
+        if (next) this.getPage(next, qty)
         else this.getAllResolve(this.offers);
       });
     });
