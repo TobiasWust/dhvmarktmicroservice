@@ -19,8 +19,15 @@ const Offer = mongoose.model('Offer', offerSchema);
 
 const db = {
   save(offer) {
-    console.log('saving offer', offer.title);
-    (new Offer(offer)).save(err => {if (err) console.error(err)});
+    (new Offer(sanitize(offer))).save(err => {if (err) console.error(err)});
+  },
+
+  sanitize(offer) {
+    r.link = offer.link
+    r.date = offer.date
+    r.title = offer.title
+    r.price  = offer.price
+    return r;
   },
 
   async count() {
