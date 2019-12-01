@@ -1,4 +1,5 @@
 const dhv = require('./dhv');
+const airscout = require('./airscout');
 const db = require('./db');
 const express = require('express');
 const cors = require('cors');
@@ -7,13 +8,15 @@ const app = express();
 const dhvAnalyse = {
   async init(qty) {
     if (await db.count() === 0) {
-      const offers = await dhv.getAll();
+      const offers = [...await dhv.getAll(), ...airscout.getAll()];
       offers.forEach(offer => db.save(offer));
     } else {
       // add new to DB
       const dhvOffers = await dhv.getAll(qty);
+      const airscoutOffers = await airscout.getAll();
+      const allOffers = [...dhvOffers, ...airscoutOffers];
       const dbOffers = await db.getAll();
-      const offers = dhvOffers.filter(e => !dbOffers.map(m => m.link).includes(e.link));
+      const offers = allOffers.filter(e => !dbOffers.map(m => m.link).includes(e.link));
       if (offers.length > 0) offers.forEach(offer => db.save(offer));
       else console.log('no new Offers')
     }

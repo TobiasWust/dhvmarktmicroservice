@@ -5,7 +5,7 @@ const { JSDOM } = jsdom;
 const dhv = {
   getAll(qty = 2000000) {
     const url = `https://www.dhv.de/db3/gebrauchtmarkt/anzeigen?suchbegriff=&rubrik=0&hersteller=&muster=&preismin=&preismax=&anbietertyp=0&land=0&plz=&start=0&itemsperpage=${qty}&order=1`;
-    console.log('getting offers')
+    console.log('getting dhv ads')
     return new Promise((resolve) => {
       http.get(url, res => {
         res.setEncoding('utf8');
