@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const murl = require('./murl');
+const config = require('./config');
 
-mongoose.connect(murl, {
+mongoose.connect(config.murl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   }, error => {

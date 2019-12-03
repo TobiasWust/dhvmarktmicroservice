@@ -1,9 +1,11 @@
 const dhv = require('./dhv');
 const airscout = require('./airscout');
+const magiclink = require('./magiclink');
 const db = require('./db');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+app.use(express.json());
 
 const dhvAnalyse = {
   async init(qty) {
@@ -16,7 +18,7 @@ const dhvAnalyse = {
       const airscoutOffers = await airscout.getAll(qty);
       const allOffers = [...dhvOffers, ...airscoutOffers];
       const dbOffers = await db.getAll();
-      
+
       const offers = allOffers.filter(e => !dbOffers.map(m => m.link).includes(e.link));
       if (offers.length > 0) offers.forEach(offer => db.save(offer));
       else console.log('no new Offers')
@@ -37,7 +39,7 @@ app.get('/', async (_req, res) => {
     r.link = e.link;
     r.title = e.title;
     r.price = e.price;
-    r.date =  e.date;
+    r.date = e.date;
     return r;
   })
   res.json(offers);
@@ -47,8 +49,17 @@ app.get('/update', async (_req, res) => {
   dhvAnalyse.init(100);
 });
 
+// routes go into the server stuff later
+app.post('/login', magiclink.login);
+
+app.get('/searchAgent', magiclink.isAuth); // todo improve isAuth to do something \o/
+app.get('/searchAgent', (req, res) => {
+  res.send('der Login für den Suchagenten hat funktioniert :)');
+});
+
+
 const server = app.listen(process.env.PORT || 8081, () => {
   const host = server.address().address
   const port = server.address().port
-  console.log('immoapi listening at http://%s:%s', host, port)
-})
+  console.log('glidersearchapi listening at http://%s:%s', host, port)
+});
