@@ -5,6 +5,7 @@ const db = require('./db');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const dhvAnalyse = {
@@ -29,8 +30,6 @@ const dhvAnalyse = {
     return dbOffers;
   }
 }
-
-app.use(cors());
 
 app.get('/', async (_req, res) => {
   dhvAnalyse.init(20); // always get the latest
