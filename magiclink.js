@@ -6,7 +6,7 @@ const magiclink = {
   async sendMail(mail) {
     axios.post('http://localhost:9000', mail) // running my mailer on localhost 9000
       .then((res) => { console.log(res) }) // errorhandling like a pro
-      .catch((error) => { console.log('error') });
+      .catch((error) => { console.log('error', error) });
   },
 
   generate(email) { // login tokens are valid for 1 hour
