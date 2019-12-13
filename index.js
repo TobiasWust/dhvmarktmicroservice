@@ -1,7 +1,8 @@
-const dhv = require('./moduels/dhv');
-const airscout = require('./moduels/airscout');
-const magiclink = require('./moduels/magiclink');
-const db = require('./moduels/db');
+const dhv = require('./modules/dhv');
+const airscout = require('./modules/airscout');
+const magiclink = require('./modules/magiclink');
+const searchAgend = require('./modules/searchAgent');
+const db = require('./modules/db');
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -10,19 +11,20 @@ app.use(express.json());
 
 const dhvAnalyse = {
   async init(qty) {
-    if (await db.count() === 0) {
+    if (await db.countOffers() === 0) {
       const offers = [...await dhv.getAll(), ...airscout.getAll()];
-      offers.forEach(offer => db.save(offer));
+      offers.forEach(offer => db.saveOffer(offer));
     } else {
       // add new to DB
       const dhvOffers = await dhv.getAll(qty);
       const airscoutOffers = await airscout.getAll(qty);
       const allOffers = [...dhvOffers, ...airscoutOffers];
-      const dbOffers = await db.getAll();
+      const dbOffers = await db.getAllOffers();
 
       const offers = allOffers.filter(e => !dbOffers.map(m => m.link).includes(e.link));
-      if (offers.length > 0) offers.forEach(offer => db.save(offer));
+      if (offers.length > 0) offers.forEach(offer => db.saveOffer(offer));
       else console.log('no new Offers')
+      searchAgent.checkNmail(offers);
     }
   },
   async getOffers() {
@@ -51,10 +53,14 @@ app.get('/update', async (_req, res) => {
 // routes go into the server stuff later
 app.post('/login', magiclink.login);
 
-app.get('/searchAgent', magiclink.isAuth); // todo improve isAuth to do something \o/
-app.get('/searchAgent', (req, res) => {
-  res.send('der Login für den Suchagenten hat funktioniert :)');
-});
+app.get('/searchAgent', async (req, res) => {
+  res.send(await db.getSearchAgentsByMail(req.query.mail));
+}); // todo improve isAuth to do something \o/
+// app.get('/searchAgent', magiclink.isAuth, (req, res) => {
+//   res.send('der Login für den Suchagenten hat funktioniert :)');
+// });
+
+app.post('/searchAgent/add', searchAgent.add);
 
 
 const server = app.listen(process.env.PORT || 8081, () => {
