@@ -23,7 +23,6 @@ const dhvAnalyse = {
 
       const offers = allOffers.filter(e => !dbOffers.map(m => m.link).includes(e.link));
       if (offers.length > 0) {
-        console.log('saving new offer', offer);
         searchAgent.checkNmail(offers);
         offers.forEach(offer => db.saveOffer(offer));
       }

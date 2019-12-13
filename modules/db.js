@@ -26,6 +26,7 @@ const SearchAgent = mongoose.model('SearchAgent', searchAgentSchema);
 
 const db = {
   saveOffer(offer) {
+    console.log('saving new offer', offer);
     (new Offer(sanitizeOffer(offer))).save(err => { if (err) console.error(err) });
   },
 
