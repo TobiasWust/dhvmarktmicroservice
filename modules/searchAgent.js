@@ -1,4 +1,5 @@
 const db = require('../modules/db');
+const axios = require('axios');
 
 module.exports = searchAgent = {
   add(req, res) { // and send mail
@@ -20,8 +21,29 @@ module.exports = searchAgent = {
     return hits;
   },
 
+  // async sendMail(mail) {
+  //   axios.post('http://localhost:9000', mail) // running my mailer on localhost 9000
+  //     .then((res) => { console.log(res) }) // errorhandling like a pro
+  //     .catch((error) => { console.log('error', error) });
+  // },
+
+  mailTemplate(hit) {
+    return `Hallo,
+    ich habe ${hit.agent.search} für dich gefunden: ${hit.offer.title}, ${hit.offer.price}, ${hit.offer.link}`;
+  },
+
+  async sendMail(hit) {
+    const { email } = hit.agent;
+    const mail = {
+      from: 'bla',
+      html: this.mailTemplate(hit),
+      to: email,
+    }
+    console.log(this.mailTemplate(hit));
+  },
+
   async checkNmail(offers = []) {
     const hits = await this.check(offers) || [];
-    hits.forEach(hit => console.log(`hey, ${hit.agent.email}, wir haben einen ${hit.agent.search} Treffer!`, hit))
+    hits.forEach(hit => this.sendMail(hit));
   }
 }

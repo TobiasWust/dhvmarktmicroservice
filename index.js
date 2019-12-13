@@ -10,8 +10,8 @@ app.use(cors());
 app.use(express.json());
 
 const dhvAnalyse = {
-  async init(qty) {
-    if (await db.countOffers() === 0) {
+  async init(qty = 20) {
+    if (1 == 0) {
       const offers = [...await dhv.getAll(), ...airscout.getAll()];
       offers.forEach(offer => db.saveOffer(offer));
     } else {
@@ -22,6 +22,7 @@ const dhvAnalyse = {
       const dbOffers = await db.getAllOffers();
 
       const offers = allOffers.filter(e => !dbOffers.map(m => m.link).includes(e.link));
+      console.log('new offers:', offers)
       if (offers.length > 0) {
         searchAgent.checkNmail(offers);
         offers.forEach(offer => db.saveOffer(offer));
