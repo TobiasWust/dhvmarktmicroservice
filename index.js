@@ -31,13 +31,13 @@ const dhvAnalyse = {
     }
   },
   async getOffers() {
-    const dbOffers = await db.getAll();
+    const dbOffers = await db.getAllOffers();
     return dbOffers;
   }
 }
 
 app.get('/', async (_req, res) => {
-  dhvAnalyse.init(20); // always get the latest
+  dhvAnalyse.init(10); // always get the latest
   const offers = (await dhvAnalyse.getOffers()).map(e => {
     r = {};
     r.link = e.link;
@@ -57,12 +57,9 @@ app.get('/update', async (_req, res) => {
 // routes go into the server stuff later
 app.post('/login', magiclink.login);
 
-app.get('/searchAgent', async (req, res) => {
-  res.send(await db.getSearchAgentsByMail(req.query.mail));
-}); // todo improve isAuth to do something \o/
-// app.get('/searchAgent', magiclink.isAuth, (req, res) => {
-//   res.send('der Login für den Suchagenten hat funktioniert :)');
-// });
+app.get('/searchAgent', magiclink.isAuth, async (req, res) => {
+  res.send(await db.getSearchAgentsByMail(res.locals.mail));
+});
 
 app.post('/searchAgent/add', searchAgent.add);
 

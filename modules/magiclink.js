@@ -1,14 +1,8 @@
 const jwt = require('jsonwebtoken');
-const axios = require('axios');
 const config = require('../config');
+const mailer = require('./mailer');
 
 const magiclink = {
-  async sendMail(mail) {
-    axios.post('http://localhost:9000', mail) // running my mailer on localhost 9000
-      .then((res) => { console.log(res) }) // errorhandling like a pro
-      .catch((error) => { console.log('error', error) });
-  },
-
   generate(email) { // login tokens are valid for 1 hour
     const date = new Date();
     date.setHours(date.getHours() + 1);
@@ -20,7 +14,7 @@ const magiclink = {
     jemand will deine Emailadresse ${email} für eine Internseitebenutzen. Hier ist ein Token dafür. <a href="https://${config.host}?token=${token}`;
   },
 
-  login(req, res) { // and send mail
+  async login(req, res) { // and send mail
     console.log('logging in')
     const { email } = req.body;
     if (!email) return res.send({ error: 'email required' });
@@ -30,7 +24,8 @@ const magiclink = {
       html: magiclink.mailTemplate(email, token),
       to: email,
     }
-    magiclink.sendMail(mail);
+    const r = await mailer.sendMail(mail);
+    console.log(r); // todo check for success
     return res.send({ success: 'mail sent' });
   },
 
@@ -60,17 +55,7 @@ const magiclink = {
       res.send({ error: 'token expired' })
       return;
     }
-
-    const findUserByEmail = (email) => {
-      if (email === 'kontakt@tobiaswust.de') return 'Wust' // super sophisticated database mock
-      else return;
-    };
-
-    const user = findUserByEmail(email) // todo: database stuff
-    if (!user) {
-      res.send({ error: 'user not found' });
-      return;
-    }
+    res.locals.mail = email;
     return next();
   }
 }

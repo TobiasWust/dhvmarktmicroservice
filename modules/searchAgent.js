@@ -1,5 +1,5 @@
 const db = require('../modules/db');
-const axios = require('axios');
+const mailer = require('./mailer')
 
 module.exports = searchAgent = {
   add(req, res) { // and send mail
@@ -32,18 +32,18 @@ module.exports = searchAgent = {
     ich habe ${hit.agent.search} für dich gefunden: ${hit.offer.title}, ${hit.offer.price}, ${hit.offer.link}`;
   },
 
-  async sendMail(hit) {
+  async prepareMail(hit) {
     const { email } = hit.agent;
     const mail = {
       from: 'bla',
       html: this.mailTemplate(hit),
       to: email,
     }
-    console.log(this.mailTemplate(hit));
+    mailer.sendMail(mail);
   },
 
   async checkNmail(offers = []) {
     const hits = await this.check(offers) || [];
-    hits.forEach(hit => this.sendMail(hit));
+    hits.forEach(hit => this.prepareMail(hit));
   }
 }
