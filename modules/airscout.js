@@ -27,7 +27,6 @@ const airscout = {
           offer.title = e.querySelectorAll('a')[1].textContent;
           offer.price = e.querySelector('.fad_price') ? e.querySelector('.fad_price').textContent.match(/\d+/g).join('').slice(0, -2) : 0;
           this.offers.push(offer);
-          console.log(offer);
         });
         if (this.offers.length >= qty) return this.getAllResolve(this.offers);
         const next = document.querySelector('[title=Weiter]');

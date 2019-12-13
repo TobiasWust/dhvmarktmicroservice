@@ -11,7 +11,7 @@ module.exports = searchAgent = {
 
   async check(offers = []) {
     let hits = [];
-    const agents = dbAgents;
+    const agents = await db.getAllSearchAgents();
     agents.forEach(agent => {
       offers.forEach(offer => {
         if (offer.title.includes(agent.search)) hits.push({ offer, agent })
