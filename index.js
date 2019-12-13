@@ -50,6 +50,7 @@ app.get('/', async (_req, res) => {
 
 app.get('/update', async (_req, res) => {
   dhvAnalyse.init(100);
+  res.send('updating');
 });
 
 // routes go into the server stuff later

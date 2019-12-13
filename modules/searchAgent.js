@@ -21,7 +21,7 @@ module.exports = searchAgent = {
   },
 
   async checkNmail(offers = []) {
-    const hits = this.check(offers) || [];
+    const hits = await this.check(offers) || [];
     hits.forEach(hit => console.log(`hey, ${hit.agent.email}, wir haben einen ${hit.agent.search} Treffer!`, hit))
   }
 }
