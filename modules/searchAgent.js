@@ -21,12 +21,6 @@ module.exports = searchAgent = {
     return hits;
   },
 
-  // async sendMail(mail) {
-  //   axios.post('http://localhost:9000', mail) // running my mailer on localhost 9000
-  //     .then((res) => { console.log(res) }) // errorhandling like a pro
-  //     .catch((error) => { console.log('error', error) });
-  // },
-
   mailTemplate(hit) {
     return `Hallo,
     ich habe ${hit.agent.search} für dich gefunden: ${hit.offer.title}, ${hit.offer.price}, ${hit.offer.link}`;
@@ -35,8 +29,9 @@ module.exports = searchAgent = {
   async prepareMail(hit) {
     const { email } = hit.agent;
     const mail = {
-      from: 'bla',
       html: this.mailTemplate(hit),
+      text: this.mailTemplate(hit),
+      subject: 'Suchagenttreffer',
       to: email,
     }
     mailer.sendMail(mail);
