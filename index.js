@@ -1,7 +1,7 @@
 const dhv = require('./modules/dhv');
 const airscout = require('./modules/airscout');
 const magiclink = require('./modules/magiclink');
-const searchAgend = require('./modules/searchAgent');
+const searchAgent = require('./modules/searchAgent');
 const db = require('./modules/db');
 const express = require('express');
 const cors = require('cors');
@@ -22,9 +22,12 @@ const dhvAnalyse = {
       const dbOffers = await db.getAllOffers();
 
       const offers = allOffers.filter(e => !dbOffers.map(m => m.link).includes(e.link));
-      if (offers.length > 0) offers.forEach(offer => db.saveOffer(offer));
+      if (offers.length > 0) {
+        console.log('saving new offer', offer);
+        searchAgent.checkNmail(offers);
+        offers.forEach(offer => db.saveOffer(offer));
+      }
       else console.log('no new Offers')
-      searchAgent.checkNmail(offers);
     }
   },
   async getOffers() {
@@ -61,7 +64,6 @@ app.get('/searchAgent', async (req, res) => {
 // });
 
 app.post('/searchAgent/add', searchAgent.add);
-
 
 const server = app.listen(process.env.PORT || 8081, () => {
   const host = server.address().address

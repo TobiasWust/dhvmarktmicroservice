@@ -19,7 +19,6 @@ const airscout = {
       res.on('data', data => { body += data });
       res.on('end', () => {
         const { document } = (new JSDOM(body)).window;
-        console.log(document);
         [...document.querySelectorAll('.adsmanager-list tr[class^=" trcategory"')].map(e => {
           const offer = {};
           offer.link = e.querySelector('a').href;
@@ -28,8 +27,9 @@ const airscout = {
           offer.title = e.querySelectorAll('a')[1].textContent;
           offer.price = e.querySelector('.fad_price') ? e.querySelector('.fad_price').textContent.match(/\d+/g).join('').slice(0, -2) : 0;
           this.offers.push(offer);
+          console.log(offer);
         });
-        if (this.offers.length >= qty) return;
+        if (this.offers.length >= qty) return this.getAllResolve(this.offers);
         const next = document.querySelector('[title=Weiter]');
         if (next) this.getPage(next, qty)
         else this.getAllResolve(this.offers);
