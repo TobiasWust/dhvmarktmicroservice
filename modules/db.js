@@ -51,6 +51,12 @@ const db = {
     (new SearchAgent(searchAgentData)).save(err => { if (err) console.error(err) });
   },
 
+  deleteSearchAgent(searchAgentId) {
+    // (new SearchAgent(sanitizeSearchAgent(searchAgent))).save(err => { if (err) console.error(err) });
+    return SearchAgent.findByIdAndDelete(searchAgentId);
+    SearchAgent.findByIdAndDelete(searchAgentId, {}, (e, r) => { console.log(e, r) });
+  },
+
   sanitizeSearchAgent(searchAgent) {
     r.email = searchAgent.email
     r.search = searchAgent.search

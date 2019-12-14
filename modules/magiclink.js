@@ -11,22 +11,26 @@ const magiclink = {
 
   mailTemplate(email, token) {
     return `Hallo,
-    jemand will deine Emailadresse ${email} für eine Internseitebenutzen. Hier ist ein Token dafür. <a href="https://${config.host}?token=${token}`;
+    jemand will deine Emailadresse ${email} für eine Internseitebenutzen. Hier ist ein Token dafür. ${token} <a href="${config.host}?token=${token}">${config.host}?token=${token}</a>`;
   },
 
-  async login(req, res) { // and send mail
+  login(req, res) { // and send mail
     console.log('logging in')
     const { email } = req.body;
     if (!email) return res.send({ error: 'email required' });
     const token = magiclink.generate(email);
     const mail = {
-      from: 'bla',
+      subject: 'Glidefinder Login',
       html: magiclink.mailTemplate(email, token),
+      text: magiclink.mailTemplate(email, token),
       to: email,
     }
-    const r = await mailer.sendMail(mail);
-    console.log(r); // todo check for success
-    return res.send({ success: 'mail sent' });
+    mailer.sendMail(mail).then(() => {
+      return res.send({ success: 'mail sent' });
+    })
+      .catch(error => {
+        res.send({ error: error.toString })
+      });
   },
 
   isAuth(req, res, next) {
@@ -51,7 +55,7 @@ const magiclink = {
     }
 
     const { email, expiration } = decoded;
-    if (expiration < new Date()) {
+    if (Date.parse(expiration) < Date.parse(new Date())) {
       res.send({ error: 'token expired' })
       return;
     }

@@ -3,11 +3,17 @@ const mailer = require('./mailer')
 
 module.exports = searchAgent = {
   add(req, res) { // and send mail
-    const { email } = req.body;
+    const { email } = req.body; // todo use auth token
     if (!email) return res.send({ error: 'email required' });
     console.log(req.body);
     db.saveSearchAgent(req.body);
     return res.send({ success: 'Searchagend for email added' });
+  },
+
+  async delete(req, res) { // and send mail
+    const r = await db.deleteSearchAgent(req.body.id);
+    if (r.errors) return res.send({ error: errors })
+    return res.send({ success: 'Searchagent deleted' });
   },
 
   async check(offers = []) {

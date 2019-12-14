@@ -61,7 +61,8 @@ app.get('/searchAgent', magiclink.isAuth, async (req, res) => {
   res.send(await db.getSearchAgentsByMail(res.locals.mail));
 });
 
-app.post('/searchAgent/add', searchAgent.add);
+app.put('/searchAgent/', magiclink.isAuth, searchAgent.add);
+app.delete('/searchAgent/delete', magiclink.isAuth, searchAgent.delete);
 
 const server = app.listen(process.env.PORT || 8081, () => {
   const host = server.address().address
